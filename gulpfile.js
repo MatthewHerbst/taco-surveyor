@@ -14,7 +14,7 @@ var gutil      = require('gulp-util');
 var source     = require('vinyl-source-stream');
 var watchify   = require('watchify');
 
-// To make Gulp complete after async tasks. https://github.com/gulpjs/gulp/issues/167
+// Make Gulp complete after async tasks. https://github.com/gulpjs/gulp/issues/167
 var isWatching = true;
 gulp.on('stop', function() {
   if(!isWatching) {

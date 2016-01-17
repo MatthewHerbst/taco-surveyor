@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "gulp build:dev",
     "prod": "gulp build:prod",
-    "start": "node index.js"
+    "start": "node server/index.js"
   },
   "repository": {
     "type": "git",

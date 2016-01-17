@@ -1,3 +1,5 @@
+// NOTE: This file is written in ES5 so as to be backwards compatible with older versions on npm.
+
 'use strict';
 
 var babelify   = require('babelify');
@@ -46,9 +48,6 @@ gulp.task('watch:less', watchLess);
 
 // Prod build tasks
 gulp.task('build:prod', ['lint:js', 'move:all', 'less'], buildProd);
-
-/*********************************** Paths ************************************/
-// TODO: implement
 
 /******************************* Task functions *******************************/
 

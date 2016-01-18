@@ -36,13 +36,13 @@ gulp.task('clean:css', cleanCss);
 gulp.task('clean:fonts:vendor', cleanVendorFonts);
 gulp.task('clean:js:vendor', cleanVendorJs);
 gulp.task('clean:styles:vendor', cleanVendorStyles);
+gulp.task('css', ['clean:css'], css);
 gulp.task('lint:js', lintJS);
 gulp.task('move:all', ['move:core', 'move:fonts:vendor', 'move:js:vendor', 'move:styles:vendor'], function(cb){cb();});
 gulp.task('move:core', ['clean:core'], moveCore);
 gulp.task('move:fonts:vendor', ['clean:fonts:vendor'], moveVendorFonts);
 gulp.task('move:js:vendor', ['clean:js:vendor'], moveVendorJs);
 gulp.task('move:styles:vendor', ['clean:styles:vendor'], moveVendorStyles);
-gulp.task('styles', ['clean:css'], css);
 
 // Used by all dev build tasks
 gulp.task('build:dev', ['lint:js', 'move:all', 'css'], buildDev);
@@ -101,7 +101,7 @@ function cleanCore() {
 
 // Cleans dist/styles
 function cleanCss() {
-  return del(['dist/styles/**/*.css']);
+  return del(['dist/styles/**/*.css', '!dist/styles/vendor/**/*.*']);
 }
 
 // Cleans dist/styles/fonts
@@ -121,12 +121,12 @@ function cleanVendorStyles() {
 
 // Move and minify CSS
 function css() {
-  return gulp.src(['src/client/styles/**/*.css'], {base: 'src/client/styles'})
+  return gulp.src(['src/client/styles/**/*.css', '!src/client/styles/vendor/**/*.*'], { base: 'src/client/styles' } )
       .pipe(rename(function(path) {
         path.extname = ".min" + path.extname;
       }))
       .pipe(sourcemaps.init())
-      .pipe(minifyCSS)
+      .pipe(minifyCSS())
       .pipe(sourcemaps.write())
       .pipe(gulp.dest('dist/styles'));
 }
@@ -168,7 +168,7 @@ function watchCore() {
 
 // Watch for changes to CSS
 function watchCss() {
-  gulp.watch(['src/client/styles/**/*.*'], ['css']);
+  gulp.watch(['src/client/styles/**/*.css', '!src/client/styles/vendor/**/*.*'], ['css']);
 }
 
 /****************************** Helper functions ******************************/

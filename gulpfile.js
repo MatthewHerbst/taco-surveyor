@@ -7,7 +7,6 @@ var browserify = require('browserify');
 var del        = require('del');
 var gulp       = require('gulp');
 var eslint     = require('gulp-eslint');
-var less       = require('gulp-less');
 var minifyCSS  = require('gulp-minify-css');
 var removeCode = require('gulp-remove-code');
 var rename     = require('gulp-rename');
@@ -34,20 +33,24 @@ gulp.task('default', ['build:dev']);
 gulp.task('clean', clean);
 gulp.task('clean:core', cleanCore);
 gulp.task('clean:css', cleanCss);
-gulp.task('clean:server', cleanServer);
+gulp.task('clean:fonts:vendor', cleanVendorFonts);
+gulp.task('clean:js:vendor', cleanVendorJs);
+gulp.task('clean:styles:vendor', cleanVendorStyles);
 gulp.task('lint:js', lintJS);
-gulp.task('move:all', ['move:core', 'move:server'], function(cb){cb();});
+gulp.task('move:all', ['move:core', 'move:fonts:vendor', 'move:js:vendor', 'move:styles:vendor'], function(cb){cb();});
 gulp.task('move:core', ['clean:core'], moveCore);
-gulp.task('move:server', ['clean:server', 'lint:php'], moveServer);
-gulp.task('less', ['clean:less'], lessCSS);
+gulp.task('move:fonts:vendor', ['clean:fonts:vendor'], moveVendorFonts);
+gulp.task('move:js:vendor', ['clean:js:vendor'], moveVendorJs);
+gulp.task('move:styles:vendor', ['clean:styles:vendor'], moveVendorStyles);
+gulp.task('styles', ['clean:css'], css);
 
 // Used by all dev build tasks
-gulp.task('build:dev', ['lint:js', 'move:all', 'less'], buildDev);
+gulp.task('build:dev', ['lint:js', 'move:all', 'css'], buildDev);
 gulp.task('watch:core', watchCore);
-gulp.task('watch:less', watchLess);
+gulp.task('watch:css', watchCss);
 
 // Prod build tasks
-gulp.task('build:prod', ['lint:js', 'move:all', 'less'], buildProd);
+gulp.task('build:prod', ['lint:js', 'move:all', 'css'], buildProd);
 
 /******************************* Task functions *******************************/
 
@@ -64,7 +67,7 @@ function buildDev(callback) {
   }
 
   rebundle();
-  watchLess(callback);
+  watchCss(callback);
   watchCore(callback);
   return callback();
 }
@@ -101,19 +104,28 @@ function cleanCss() {
   return del(['dist/styles/**/*.css']);
 }
 
-// Cleans .php files
-function cleanServer() {
-  return del(['dist/**/*.php']);
+// Cleans dist/styles/fonts
+function cleanVendorFonts() {
+  return del(['dist/styles/fonts/**/*.*']);
 }
 
-// Move and minify Less
-function lessCSS() {
+// Cleans dist/js/vendor
+function cleanVendorJs() {
+  return del(['dist/js/vendor/**/*.*']);
+}
+
+// Cleans dist/styles/vendor dist/styles/fonts/vendor
+function cleanVendorStyles() {
+  return del(['dist/styles/vendor/**/*.*', 'dist/styles/fonts/**/*.*']);
+}
+
+// Move and minify CSS
+function css() {
   return gulp.src(['src/client/styles/**/*.css'], {base: 'src/client/styles'})
       .pipe(rename(function(path) {
         path.extname = ".min" + path.extname;
       }))
       .pipe(sourcemaps.init())
-      .pipe(less())
       .pipe(minifyCSS)
       .pipe(sourcemaps.write())
       .pipe(gulp.dest('dist/styles'));
@@ -132,10 +144,21 @@ function moveCore() {
       .pipe(gulp.dest('dist'));
 }
 
-// Moves php files that need no processing into dist
-function moveServer() {
-  return gulp.src(['src/server/**/*.php'], { base: 'src/server' } )
-      .pipe(gulp.dest('dist'));
+// Moves vendor JavaScript files that need no processing into dist
+function moveVendorJs() {
+  return gulp.src(['src/client/js/vendor/**/*.*'], { base: 'src/client/js/vendor' } )
+      .pipe(gulp.dest('dist/js/vendor'));
+}
+
+function moveVendorFonts() {
+  return gulp.src(['src/client/styles/fonts/**/*.*'], { base: 'src/client/styles/fonts' } )
+      .pipe(gulp.dest('dist/styles/fonts'));
+}
+
+// Moves vendor style files (including fonts) that need no processing into dist
+function moveVendorStyles() {
+  return gulp.src(['src/client/styles/vendor/**/*.*'], { base: 'src/client/styles/vendor' } )
+      .pipe(gulp.dest('dist/styles/vendor'));
 }
 
 // Watch for changes to core
@@ -144,8 +167,8 @@ function watchCore() {
 }
 
 // Watch for changes to CSS
-function watchLess() {
-  gulp.watch(['src/client/styles/**/*.*'], ['less']);
+function watchCss() {
+  gulp.watch(['src/client/styles/**/*.*'], ['css']);
 }
 
 /****************************** Helper functions ******************************/

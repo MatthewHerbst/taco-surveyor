@@ -1,4 +1,4 @@
-// NOTE: This file is written in ES5 so as to be backwards compatible with older versions on npm.
+// NOTE: This file is written in ES5 so as to be backwards compatible with older versions of npm.
 
 'use strict';
 
@@ -16,7 +16,7 @@ var source     = require('vinyl-source-stream');
 var watchify   = require('watchify');
 
 // Make Gulp complete after async tasks. https://github.com/gulpjs/gulp/issues/167
-var isWatching = true;
+var isWatching = false;
 gulp.on('stop', function() {
   if(!isWatching) {
     process.nextTick(function() {
@@ -55,6 +55,8 @@ gulp.task('build:prod', ['lint:js', 'move:all', 'css'], buildProd);
 /******************************* Task functions *******************************/
 
 function buildDev(callback) {
+  isWatching = true;
+
   var bundler = getBundler(['src/client/js/main.js']);
   var watcher = getWatcher(bundler, rebundle);
 
@@ -62,7 +64,7 @@ function buildDev(callback) {
     lintJS(callback);
 
     return watcher.bundle()
-      .pipe(source('bundle.min.js'))
+      .pipe(source('bundle.min.js')) // We still have to call it .min unless we want to deal with code replacement in index.html
       .pipe(gulp.dest('dist/js'));
   }
 
@@ -74,11 +76,8 @@ function buildDev(callback) {
 
 /**
  * Builds a production version of the website.
- * TODO: I think the removeCode is going to mess-up the sourcemaps. Check this.
  */
 function buildProd() {
-  isWatching = false;
-
   var bundler = getBundler(['src/client/js/main.js']);
   bundler.transform('stripify');
   bundler.plugin('minifyify', { map: 'bundle.min.js.map', output: 'dist/js/bundle.min.js.map' } );
@@ -96,7 +95,7 @@ function clean() {
 
 // Cleans core files
 function cleanCore() {
-  return del(['dist/*.*', 'dist/js/plugins.js', '!dist/**/*.php']);
+  return del(['dist/*.*', 'dist/js/plugins.js']);
 }
 
 // Cleans dist/styles

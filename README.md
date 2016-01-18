@@ -15,6 +15,7 @@ npm install
 ### Dev
 Dev builds include watch tasks for auto-rebuilding on code change.
 Dev builds do not remove comments and logging code from the build.
+Dev builds do not perform minification of core JavaScript
 
 `npm run dev`
 
@@ -23,6 +24,7 @@ The build is completed after you see the x bytes written message. The command wi
 ### Prod
 Prod builds do not include any development tools such as watch and auto-building available in dev builds.
 Prod builds remove all comments and logging code from the build.
+Prod builds perform minification of core JavaScript. Source maps are provided.
 
 `npm run prod`
 
@@ -32,4 +34,8 @@ The build is completed after you see the x bytes written message. The command wi
 
 Builds will be placed in `dist`, which acts as the document root.
 
-`npm start` will start the server. Visit http://localhost:3333 in your browser of choice.
+After building, you may start the server/app with the following:
+
+`npm start`
+
+Visit http://localhost:3333 in your browser of choice.

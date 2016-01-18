@@ -1,7 +1,7 @@
 import Reflux from 'reflux';
 import Immutable from 'immutable';
-import AjaxUtilities from './AjaxUtilities';
-import {SurveyListActions} from '../../actions';
+import {SurveyListActions} from '../actions';
+let utils = require('../utils')
 
 module.exports = Reflux.createStore({
   listenables: [SurveyListActions],
@@ -17,11 +17,11 @@ module.exports = Reflux.createStore({
   },
   onGetSurveys () {
     console.log('SurveyListStore: getting')
-    AjaxUtilities.request(
+    utils.ajaxRequest(
       '/get/surveys',
       Immutable.Map(),
       this.getSurveysSuccess,
-      AjaxUtilities.error('failed getting the list of surveys')
+      utils.ajaxError('SurveyListStore: failed getting the list of surveys')
     );
   },
   getSurveysSuccess (data) {

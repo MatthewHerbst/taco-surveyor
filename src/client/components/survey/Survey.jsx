@@ -4,7 +4,7 @@ import {SurveyStore} from '../../stores';
 
 module.exports = React.createClass({
   displayName: 'Survey',
-  mixins: [Reflux.connectStore(SurveyStore)],
+  mixins: [Reflux.connect(SurveyStore)],
   render () {
     return (
       <div>{'I am Survey'}</div>

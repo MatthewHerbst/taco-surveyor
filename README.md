@@ -11,6 +11,8 @@ npm install
 ```
 
 ## Setup your database
+**! IT IS EXTREMELY RECOMMENDED THAT YOU CHANGE THE BELOW LISTED DEFAULT USER/PASSWORD IN A PRODUCTION ENVIRONMENT !**
+
 At a minimum, you will require a MySQL database running on your localhost, port 3306. The database must have the user account `taco_master` with the password `ninja_warlord`. These values can be modified in `index.js` at the project root.
 
 In addition, the database must have table `taco_surveyor`, and user `ninja_warlord` must have full privileges within this table.

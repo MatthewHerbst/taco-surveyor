@@ -12,6 +12,3 @@
 /* SITE */
 
     Last update: 2016/01/18
-    Standards: CSS3, HTML5
-    Components: Node.js, Express, jQuery, Normalize.css, React.js
-    Software: Atom, NPM, Gulp, Browserify, Watchify, Babelify, ESLint

@@ -16,7 +16,7 @@ module.exports = Reflux.createStore({
     };
   },
   onGetSurveys () {
-    console.log('SurveyListStore: getting')
+    console.log('SurveyListStore: getting list of surveys');
     utils.ajaxRequest(
       '/get/surveys',
       Immutable.Map(),
@@ -25,7 +25,7 @@ module.exports = Reflux.createStore({
     );
   },
   getSurveysSuccess (data) {
-    let response = Immutable.fromJs(data);
+    let response = Immutable.fromJS(data);
 
     if(!response.has('error')) {
       console.log('SurveyListStore: received new survey list data', response.toJS());

@@ -2,6 +2,7 @@ exports.ajaxRequest = (url, data, success, error) => {
   return $.ajax({
     url: url,
     data: data.toJS(),
+    dataType: 'json',
     success: success,
     error: error
   });

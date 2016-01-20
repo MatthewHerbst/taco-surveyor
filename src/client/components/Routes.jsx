@@ -12,6 +12,8 @@ const routes = (
     <Route path={'/'} component={App}>
       <IndexRoute component={About} />
 
+      <Route path={'about'} component={About} />
+
       <Route path={'surveys'} component={SurveyList} >
         <Route path={':surveyId'} component={Survey} />
       </Route>

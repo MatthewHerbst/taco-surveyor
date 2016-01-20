@@ -19,13 +19,10 @@ module.exports = React.createClass({
           <IndexLinkContainer eventKey={1} to={'/'} activeClassName={'active'}>
             <NavItem>{'Home'}</NavItem>
           </IndexLinkContainer>
-          <LinkContainer eventKey={2} to={'/about'} activeClassName={'active'}>
-            <NavItem>{'About'}</NavItem>
-          </LinkContainer>
-          <LinkContainer eventKey={3} to={'/surveys'} activeClassName={'active'}>
+          <LinkContainer eventKey={2} to={'/surveylist'} activeClassName={'active'}>
             <NavItem>{'Surveys'}</NavItem>
           </LinkContainer>
-          <LinkContainer eventKey={4} to={'/admin'} activeClassName={'active'}>
+          <LinkContainer eventKey={3} to={'/admin'} activeClassName={'active'}>
             <NavItem>{'Admin'}</NavItem>
           </LinkContainer>
         </Nav>

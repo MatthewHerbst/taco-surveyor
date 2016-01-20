@@ -1,8 +1,10 @@
 import React from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Col, Row} from 'react-bootstrap';
 
 module.exports = React.createClass({
   displayName: 'About',
+  mixins: [PureRenderMixin],
   render () {
     return (
       <diw>

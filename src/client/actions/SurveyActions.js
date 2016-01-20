@@ -1,5 +1,6 @@
 import Reflux from 'reflux';
 
-module.expots = Reflux.createActions([
-  
+module.exports = Reflux.createActions([
+  'getQuestion',
+  'getSurvey'
 ]);

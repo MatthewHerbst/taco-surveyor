@@ -37,7 +37,7 @@ module.exports = React.createClass({
         </div>
       );
     } else {
-      userOptions = (<NavItem>{'Please login!'}</NavItem>);
+      userOptions = (<NavItem>{'Please Login'}</NavItem>);
     }
 
     return (

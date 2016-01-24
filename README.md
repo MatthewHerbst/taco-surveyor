@@ -1,5 +1,8 @@
 # taco-surveyor
-We survey great Tacos to help you kick ass at lunch.
+We survey you Taco knowledge to help you kick ass at lunch.
+
+# Usage
+Since this is a demo app, login is only simulated. There is no HTTPS connection and there are no passwords. Enter a user name and you will be that user. Logout and enter a new user name to switch users. Use the user name `admin` to become the Admin user who has question management and statistics capabilities.
 
 # Install
 ## Get the code
@@ -13,9 +16,9 @@ npm install
 ## Setup your database
 **! IT IS EXTREMELY RECOMMENDED THAT YOU CHANGE THE BELOW LISTED DEFAULT USER/PASSWORD IN A PRODUCTION ENVIRONMENT !**
 
-At a minimum, you will require a MySQL database running on your localhost, port 3306. The database must have the user account `taco_master` with the password `ninja_warlord`. These values can be modified in `index.js` at the project root.
+At a minimum, you will require a MySQL database running on your localhost, port 3306. The database must have the user account `taco_master` with the password `taco_warlord`. These values can be modified in `index.js` at the project root.
 
-In addition, the database must have table `taco_surveyor`, and user `ninja_warlord` must have full privileges within this table.
+In addition, the database must have table `taco_surveyor`, and user `taco_warlord` must have full privileges within this table.
 
 If tables from a previous install (without a major version change) already exist the app should continue to work, picking up the existing data automatically when run.
 

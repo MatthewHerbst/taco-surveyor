@@ -1,4 +1,4 @@
 module.exports = {
-  SurveyActions: require('./SurveyActions'),
-  SurveyListActions: require('./SurveyListActions')
+  QuestionActions: require('./QuestionActions'),
+  UserActions: require('./UserActions')
 };

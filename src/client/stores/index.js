@@ -1,4 +1,5 @@
 module.exports = {
-  SurveyStore: require('./SurveyStore'),
-  SurveyListStore: require('./SurveyListStore')
+  ProfileStore: require('./ProfileStore'),
+  QuestionStore: require('./QuestionStore'),
+  UserStore: require('./UserStore')
 };

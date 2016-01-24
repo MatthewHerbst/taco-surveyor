@@ -5,7 +5,7 @@ var Sequelize = require('sequelize');
 /**************************************** SERVER INIT *********************************************/
 
 var app = express();
-var sequelize = new Sequelize('taco_surveyor', 'taco_master', 'ninja_warlord');
+var sequelize = new Sequelize('taco_surveyor', 'taco_master', 'taco_warlord');
 
 app.use(express.static(__dirname + "/dist"));
 app.use(harp.mount(__dirname + "/dist"));
@@ -17,10 +17,10 @@ app.listen(port, function() {
 
 /****************************************** MODELS ************************************************/
 
-var Survey = sequelize.define('survey', {
-  name: Sequelize.STRING
+var Answer = sequelize.define('answer', {
+  answer: Sequelize.STRING
 }, {
-  tableName: 'surveys'
+  tableName: 'answers'
 });
 
 var Question = sequelize.define('question', {
@@ -29,68 +29,66 @@ var Question = sequelize.define('question', {
   tableName: 'questions'
 });
 
-var Answer = sequelize.define('answer', {
-  answer: Sequelize.STRING
+var Record = sequelize.define('record', {
+
 }, {
-  tableName: 'answers'
+  tableName: 'records'
 });
 
-Survey.hasMany(Question, {as: 'Questions'});
+var User = sequelize.define('user', {
+  name: Sequelize.STRING
+}, {
+  tableName: 'users'
+});
+
 Question.hasMany(Answer, {as: 'Answers'});
+Record.belongsTo(Answer);
+Record.belongsTo(Question);
+User.hasMany(Record, {as: 'Records'});
 
 sequelize.sync().then(function () {
   console.log('Sync with MySQL success');
 }, function (err) {
-  console.error('Sync with MySQL failed:', err);
+  console.error('Sync with MySQL failed', err);
 });
 
 /******************************************** API *************************************************/
 
-app.get('/get/question', function(req, res) {
-  console.log(req);
-  console.log('/get/question requested question for survey ' + req.params.surveyId);
+app.get('/question', function(req, res) {
+  console.log('Question requested for user ' + req.query.user);
 
-  Question.findAll({
-    where: {
-      surveyId: req.params.surveyId
-    },
-    include: [{
-      model: Answer,
-      as: 'Answers'
-    }]
-  }).then(function (questions) {
-    console.log('/get/question found question for survey ' + req.params.surveyId);
+  Question.findOne({
+    include: [
+      {
+        model: Answer,
+        as: 'Answers'
+      }
+    ]
+  }).then(function (question) {
+    console.log('Question found for user ' + req.query.user);
     res.setHeader('Cache-Control', 'no-cache');
-    res.json(questions[0]);
+    res.json(question);
   }, function (err) {
-    console.error('/get/question failed getting question for survey ' + req.params.surveyId, err);
+    console.error('Failed getting question for user ' + req.query.user, err);
   });
 });
 
-app.get('/get/surveys', function(req, res) {
-  console.log('/get/surveys requested survey list');
+app.get('/profile', function(req, res) {
+  console.log('Records requested for user ' + req.query.user);
 
-  Survey.findAll().then(function (surveys) {
-    console.log('/get/surveys found survey list');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.json(surveys);
-  }, function (err) {
-    console.error('/get/surveys failed:', err);
-  });
-});
-
-app.get('/get/survey', function(req, res) {
-  console.log('/get/survey requested survey ' + req.params.surveyId);
-
-  Survey.findAll({
+  Record.findAll({
     where: {
-      surveyId: req.params.surveyId
+      user: req.query.user
     }
-  }).then(function (surveys) {
-    console.log('/get/survey found survey ' + req.params.surveyId);
+  }).then(function (records) {
+    console.log(records.length + ' records found for user ' + req.query.user);
     res.setHeader('Cache-Control', 'no-cache');
-    res.json(surveys[0]);
+    res.json(records);
   }, function (err) {
-    console.error('/get/survey failed getting survey ' + req.params.surveyId, err);
+    console.error('Failed getting records for user ' + req.query.user, err);
   });
+});
+
+app.get('/submit', function(req, res) {
+  console.log('Submit answer requested');
 });

@@ -1,5 +1,6 @@
 import React from 'react';
 import {Grid} from 'react-bootstrap';
+import Login from './Login';
 import Nav from './Nav';
 
 module.exports = React.createClass({
@@ -15,7 +16,7 @@ module.exports = React.createClass({
         <Nav />
         <div className={'taco-surveyor-content'} id={'page-wrapper'}>
           <Grid fluid>
-            {this.props.children}
+            <Login />
           </Grid>
         </div>
       </div>

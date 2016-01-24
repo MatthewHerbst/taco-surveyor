@@ -1,7 +1,7 @@
 module.exports = {
   App: require('./App'),
+  Login: require('./Login'),
   Nav: require('./Nav'),
   Routes: require('./Routes'),
-  SurveyList: require('./SurveyList'),
   SurveyManager: require('./SurveyManager')
 };

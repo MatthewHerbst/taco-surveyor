@@ -6,20 +6,18 @@ import About from './About';
 import Admin from './Admin';
 import App from './App';
 import {Survey} from './survey';
-import SurveyList from './SurveyList';
 import SurveyManager from './SurveyManager';
 
 const routes = (
   <Router history={history}>
     <Route path={'/'} component={App}>
-      <IndexRoute component={About} />
+      <IndexRoute component={Survey} />
 
       <Route path={'about'} component={About} />
-      <Route path={'surveylist'} component={SurveyList} />
-      <Route path={'surveys/:surveyId'} component={Survey} />
+      <Route path={'survey'} component={Survey} />
 
       <Route path={'admin'} component={Admin} >
-        <Route path={'managesurvey/:surveyId'} component={SurveyManager} />
+        <Route path={'managesurvey'} component={SurveyManager} />
       </Route>
 
     </Route>

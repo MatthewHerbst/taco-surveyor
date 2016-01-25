@@ -9,12 +9,12 @@ module.exports = React.createClass({
   displayName: 'Nav',
   mixins: [PureRenderMixin, Reflux.connect(UserStore)],
   render () {
-    let state = this.state;
+    let user = this.state.user;
 
     let userOptions = null;
-    if(state.loggedIn) {
+    if(user.has('id')) {
       let adminOption = null;
-      if(state.user === 'admin') {
+      if(user.get('name') === 'admin') {
         adminOption = (
           <LinkContainer eventKey={3} to={'/admin'} activeClassName={'active'}>
             <NavItem>{'Admin'}</NavItem>
@@ -23,21 +23,25 @@ module.exports = React.createClass({
       }
 
       userOptions = (
-        <div>
+        <Nav pullRight className={'top-nav'}>
           <IndexLinkContainer eventKey={1} to={'/'} activeClassName={'active'}>
             <NavItem>{'Home'}</NavItem>
           </IndexLinkContainer>
           <LinkContainer eventKey={2} to={'/profile'} activeClassName={'active'}>
             <NavItem>{'My Profile'}</NavItem>
           </LinkContainer>
+          {adminOption}
           <LinkContainer eventKey={adminOption === null ? 3 : 4} to={'/login'} query={{logout: true}} activeClassName={'active'}>
             <NavItem>{'Logout'}</NavItem>
           </LinkContainer>
-          {adminOption}
-        </div>
+        </Nav>
       );
     } else {
-      userOptions = (<NavItem>{'Please Login'}</NavItem>);
+      userOptions = (
+        <Nav pullRight className={'top-nav'}>
+          <NavItem>{'Please Login'}</NavItem>
+        </Nav>
+      );
     }
 
     return (
@@ -51,9 +55,7 @@ module.exports = React.createClass({
           <Navbar.Toggle />
         </Navbar.Header>
         <Navbar.Collapse>
-          <Nav pullRight className={'top-nav'}>
-            {userOptions}
-          </Nav>
+          {userOptions}
         </Navbar.Collapse>
       </Navbar>
     );

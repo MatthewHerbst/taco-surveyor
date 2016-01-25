@@ -54,8 +54,17 @@ sequelize.sync().then(function () {
 
 /******************************************** API *************************************************/
 
+app.get('/login', function(req, res) {
+  User.findOrCreate({ where: {name: req.query.username} })
+      .spread(function(user, created) {
+        console.log('User ' + user.name + (created ? ' created ' : ' found'));
+        res.setHeader('Cache-Control', 'no-cache');
+        res.json(user);
+      });
+});
+
 app.get('/question', function(req, res) {
-  console.log('Question requested for user ' + req.query.user);
+  console.log('Question requested for user ' + req.query.userId);
 
   Question.findOne({
     include: [
@@ -65,30 +74,48 @@ app.get('/question', function(req, res) {
       }
     ]
   }).then(function (question) {
-    console.log('Question found for user ' + req.query.user);
+    console.log('Question found for user ' + req.query.userId);
     res.setHeader('Cache-Control', 'no-cache');
     res.json(question);
   }, function (err) {
-    console.error('Failed getting question for user ' + req.query.user, err);
+    console.error('Failed getting question for user ' + req.query.userId, err);
   });
 });
 
 app.get('/profile', function(req, res) {
-  console.log('Records requested for user ' + req.query.user);
+  console.log('Records requested for user ' + req.query.userId);
 
   Record.findAll({
     where: {
       user: req.query.user
     }
   }).then(function (records) {
-    console.log(records.length + ' records found for user ' + req.query.user);
+    console.log(records.length + ' records found for user ' + req.query.userId);
     res.setHeader('Cache-Control', 'no-cache');
     res.json(records);
   }, function (err) {
-    console.error('Failed getting records for user ' + req.query.user, err);
+    console.error('Failed getting records for user ' + req.query.userId, err);
   });
 });
 
 app.get('/submit', function(req, res) {
-  console.log('Submit answer requested');
+  console.log('User ' + req.query.userId + ' submitted answer ' + req.query.answerId + ' for question ' + req.query.questionId);
+
+  Record.create(
+    {
+      where: {
+        answerId: req.query.answerId,
+        questionId: req.query.questionId,
+        userId: req.query.userId
+      }
+    })
+    .then(function() {
+        console.log('Answer submitted successfully');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.json({success: 'yay!'});
+    }, function(err) {
+      console.error('ERROR: answer submit failed', err);
+      res.setHeader('Cache-Control', 'no-cache');
+      res.json({error: 'There was a problem submitting the answer.'});
+    });
 });

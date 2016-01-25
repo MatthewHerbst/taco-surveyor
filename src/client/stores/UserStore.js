@@ -1,29 +1,32 @@
 import Reflux from 'reflux';
 import Immutable from 'immutable';
 import {UserActions} from '../actions';
+import history from '../components/history';
 let utils = require('../utils');
 
 module.exports = Reflux.createStore({
   listenables: [UserActions],
   init () {
-    this.loggedIn = false;
-    this.user = '';
+    this.user = Immutable.Map();
   },
   getInitialState () {
     return {
-      loggedIn: this.loggedIn,
       user: this.user
     };
   },
-  onLogin (user) {
-    if(this.user) {
-      console.log('UserStore: attempting to login user ' + user);
-      utils.ajaxRequest(
-        '/user',
-        Immutable.Map({user: user, action: 'login'}),
-        this.onLoginSuccess,
-        utils.ajaxError('UserStore: attempting to login user failed')
-      );
+  onLogin () {
+    if(this.user.has('name')) {
+      let username = this.user.get('name');
+
+      if(username) {
+        console.log('UserStore: attempting to login user ' + username);
+        utils.ajaxRequest(
+          '/login',
+          Immutable.Map({username: username}),
+          this.onLoginSuccess,
+          utils.ajaxError('UserStore: attempt to login user ' + username + ' failed')
+        );
+      }
     }
   },
   onLoginSuccess (data) {
@@ -33,11 +36,13 @@ module.exports = Reflux.createStore({
       if(!response.has('error')) {
         console.log('UserStore: received login confirmation', response.toJS());
 
-        this.loggedIn = true;
+        this.user = response;
 
         this.trigger({
-          loggedIn: this.loggedIn
+          user: this.user
         });
+
+        history.push('/survey');
       } else {
         console.error('UserStore: attempting to login user failed', response.toJS());
         alert('There was a problem trying to log you in. Please refresh the page. If this problem continues, please report the below error message to Taco-Surveyor Support\n\n' + response.get('error'));
@@ -48,40 +53,18 @@ module.exports = Reflux.createStore({
     }
   },
   onLogout () {
-    console.log('UserStore: attempting to logout user ' + this.user);
-    utils.ajaxRequest(
-      '/user',
-      Immutable.Map({user: this.user, action: 'logout'}),
-      this.onLogoutSuccess,
-      utils.ajaxError('UserStore: attempting to logout user failed')
-    );
+    console.log('UserStore: attempting to logout user ' + this.user.get('name'));
+
+    // NOTE: no network request right now since we aren't really doing user management
+    this.user = this.user.clear();
+
+    this.trigger({
+      user: this.user
+    });
   },
-  onLogoutSuccess (data) {
-    let response = Immutable.fromJS(data);
-
-    if(response) {
-      if(!response.has('error')) {
-        console.log('UserStore: received logout confirmation', response.toJS());
-
-        this.loggedIn = false;
-        this.user = '';
-
-        this.trigger({
-          loggedIn: this.loggedIn,
-          user: this.user
-        });
-      } else {
-        console.error('UserStore: attempting to logout user failed', response.toJS());
-        alert('There was a problem trying to log you out. Please refresh the page. If this problem continues, please report the below error message to Taco-Surveyor Support\n\n' + response.get('error'));
-      }
-    } else {
-      console.error('UserStore: failed attempted logout: response was null');
-      alert('There was a problem trying to log you out. Please refresh the page. If this problem continues, please report the below error message to Taco-Surveyor Support\n\nError: response was null');
-    }
-  },
-  onSetUser (user) {
-    console.log('UserStore: setting user to: ' + user);
-    this.user = user;
+  onSetUserName (username) {
+    console.log('UserStore: setting username to: ' + username);
+    this.user = this.user.set('name', username);
     this.trigger({
       user: this.user
     });

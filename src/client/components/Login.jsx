@@ -18,8 +18,8 @@ module.exports = React.createClass({
     UserActions.login();
   },
   handleUserChange () {
-    console.log('Login: setting user to: ' + this.username.getValue());
-    UserActions.setUser(this.username.getValue());
+    console.log('Login: setting username to: ' + this.username.getValue());
+    UserActions.setUserName(this.username.getValue());
   },
   _username (ref) {
     this.username = ref;
@@ -27,7 +27,7 @@ module.exports = React.createClass({
   render () {
     let state = this.state;
 
-    if(state.loggedIn) {
+    if(state.user.has('id')) {
       return (
         <div>
           {this.props.children}
@@ -35,12 +35,13 @@ module.exports = React.createClass({
       );
     }
 
+    let userNameValid = state.user.has('name') &&  state.user.get('name');
     const innerSubmit = (
       <Button
-        bsStyle={state.user === '' ? 'danger' : 'success'}
+        bsStyle={userNameValid ? 'success' : 'danger'}
         onClick={this.handleLoginSubmit}
       >
-        {state.user === '' ? 'Enter User Name' : 'Login'}
+        {userNameValid ? 'Login' : 'Enter User Name'}
       </Button>
     );
 

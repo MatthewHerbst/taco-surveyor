@@ -2,6 +2,7 @@ import Reflux from 'reflux';
 import Immutable from 'immutable';
 import {QuestionActions} from '../actions';
 import UserStore from './UserStore';
+import {history} from '../components';
 let utils = require('../utils');
 
 module.exports = Reflux.createStore({
@@ -12,6 +13,7 @@ module.exports = Reflux.createStore({
     this.question = null;
     this.questionsAvailable = true;
     this.selectedAnswerId = -1;
+    this.user = '';
   },
   getInitialState () {
     return {
@@ -61,16 +63,23 @@ module.exports = Reflux.createStore({
     });
   },
   onSubmitAnswer () {
-    console.log('QuestionStore: submitting answer');/*
-    utils.ajaxRequest(
-      '/submit',
-      Immutable.Map({
-        answerId: this.selectedAnswerId,
-        questionId: this.question.get('id')
-      }),
-      this.onGetQuestionSuccess,
-      utils.ajaxError('QuestionStore: failed getting new question')
-    );*/
+    if(this.user && this.user.has('id')) {
+      console.log('QuestionStore: submitting answer');
+      utils.ajaxRequest(
+        '/submit',
+        Immutable.Map({
+          answerId: this.selectedAnswerId,
+          questionId: this.question.get('id'),
+          userId: this.user.get('id')
+        }),
+        this.onGetQuestionSuccess,
+        utils.ajaxError('QuestionStore: failed getting new question')
+      );
+    } else {
+      console.warn('QuestionStore: a logged out user attempted to submit an answer');
+      alert('Uhoh! We\'re not sure how you got here, but you shouldn\'t be trying to submit answers without being logged in. If you are logged in and you see this message, please contact Taco-Surveyor Support. Thank you.');
+      history.push('/');
+    }
   },
   onSubmitAnswerSuccess (data) {
     let response = Immutable.fromJS(data);
@@ -97,7 +106,10 @@ module.exports = Reflux.createStore({
       alert('There was a problem submitting your answer. Please refresh the page. If this problem continues, please report the below error message to Taco-Surveyor Support\n\nError: response was null');
     }
   },
-  userStoreChange (something) {
-    console.log('I THINK I GET SOMETHING?', something);
+  userStoreChange (userStore) {
+    console.log('QuestionStore: UserStore changed user to:', userStore.user.toJS());
+    if(userStore.user.has('name')) {
+      this.user = userStore.user;
+    }
   }
 });

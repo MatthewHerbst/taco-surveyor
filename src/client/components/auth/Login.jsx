@@ -7,10 +7,8 @@ import {UserStore} from '../stores';
 
 module.exports = React.createClass({
   displayName: 'Login',
-  propTypes: {
-    children: React.PropTypes.shape({
-      props: React.PropTypes.object
-    })
+  contextTypes: {
+    router: React.PropTypes.object.isRequired
   },
   mixins: [PureRenderMixin, Reflux.connect(UserStore)],
   handleLoginSubmit () {
@@ -26,14 +24,6 @@ module.exports = React.createClass({
   },
   render () {
     let state = this.state;
-
-    if(state.user.has('id')) {
-      return (
-        <div>
-          {this.props.children}
-        </div>
-      );
-    }
 
     let userNameValid = state.user.has('name') &&  state.user.get('name');
     const innerSubmit = (
